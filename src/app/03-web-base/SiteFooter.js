@@ -1,11 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Link from "next/link";
 
 import { getNavLinks } from "@/helpers/web-base-helpers";
 
-async function SiteFooter() {
-  const navLinks = await getNavLinks();
-
+function SiteFooter() {
   return (
     <header className="site-footer">
       <div className="logo-wrapper">
@@ -20,15 +18,9 @@ async function SiteFooter() {
       <div className="link-wrapper">
         <div className="col">
           <h2>Navigation</h2>
-          <nav>
-            <ol>
-              {navLinks.map(({ slug, label, href }) => (
-                <li key={slug}>
-                  <Link href={href}>{label}</Link>
-                </li>
-              ))}
-            </ol>
-          </nav>
+          <Suspense>
+            <Nav />
+          </Suspense>
         </div>
         <div className="col">
           <h2>Legal</h2>
@@ -48,6 +40,22 @@ async function SiteFooter() {
         </div>
       </div>
     </header>
+  );
+}
+
+async function Nav() {
+  let navLinks = await getNavLinks();
+
+  return (
+    <nav>
+      <ol>
+        {navLinks.map(({ slug, label, href }) => (
+          <li key={slug}>
+            <Link href={href}>{label}</Link>
+          </li>
+        ))}
+      </ol>
+    </nav>
   );
 }
 
